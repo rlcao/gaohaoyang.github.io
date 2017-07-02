@@ -5,7 +5,6 @@ categories: WeaveNetwork
 tags:  WeaveNetwork ProblemAnalysis
 author: RLCAO
 ---
-
 * content
 {:toc}
 ### Background
@@ -301,14 +300,15 @@ WARN: 2017/06/30 07:55:50.346385 TCP connection from 172.27.33.31:37276 to 10.36
 
 ### Explaination
 Access pga-hawkeye from nodes outside of kubernetes will timeout. This is because datastreams from outside will go through chains:
-* PREROUTING, where dst and port get changed by KUBE-SERVICES chains
-* FORWARD, where WEAVE-NPC takes place, and packets gets blocked, since the src/port does not match following rule:
+1. PREROUTING, where dst and port get changed by KUBE-SERVICES chains
+2. FORWARD, where WEAVE-NPC takes place, and packets gets blocked, since the src/port does not match following rule:
 ```text
 -A WEAVE-NPC -m set --match-set weave-local-pods src -m set ! --match-set weave-local-pods dst -j ACCEPT
 ```
+
 However, accessing from nodes inside kubernetes will succeed. This is becuase datastreams originated from hosts will go through chains:
-* OUTPUT, where dst and port get changed by KUBE-SERVICES chains
-* POSTROUTING, where WEAVE takes place and masquerade happens, which updated the src/port 
+1. OUTPUT, where dst and port get changed by KUBE-SERVICES chains
+2. POSTROUTING, where WEAVE takes place and masquerade happens, which updated the src/port 
 
 ### Solution
 Update a rule in custom chain WEAVE-NPC created by weave-npc to accept datastreams originated outside of k8s nodes.
