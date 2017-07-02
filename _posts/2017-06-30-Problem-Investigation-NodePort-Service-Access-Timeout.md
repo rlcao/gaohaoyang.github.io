@@ -9,8 +9,10 @@ author: RLCAO
 {:toc}
 ### Background
 Today, I have setup a k8s cluster using weave network. The versions will be mentioned in later parts of this blog. However, it will time out when accessing a service through node port of the service, if originated from non-k8s-nodes, while it works as expect if originated from k8s cluster nodes. This is really wired issue which should not happen in the first place.
+
 I am going to collect the related data, and explain to you what happened under the surface. I hope you will learn something regarding weave network and iptables. 
-Top level sections of this blog:
+
+Sections of this blog:
 * [Environment](#environment)
 * [Problem](#problem)
 * [Gathered Facts](#gathered-facts)
