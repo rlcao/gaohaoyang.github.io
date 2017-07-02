@@ -1,8 +1,8 @@
 ---
 layout: post
 title:  "Problem Investigation: Node Port Service Access from Non-K8s-Nodes Timed Out"
-categories: WeaveNetwork
-tags:  WeaveNetwork ProblemAnalysis
+categories: Network
+tags:  Weave Network ProblemAnalysis
 author: RLCAO
 ---
 * content

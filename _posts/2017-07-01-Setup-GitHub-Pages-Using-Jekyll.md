@@ -1,8 +1,8 @@
 ---
 layout: post
 title:  "Howto: Setup Blog on Github Using Jekyll"
-categories: 
-tags: GitHubPages 
+categories: Writing
+tags: GitHub Pages 
 author: RLCAO
 ---
 
