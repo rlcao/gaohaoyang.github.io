@@ -7,7 +7,7 @@ author: RLCAO
 ---
 * content
 {:toc}
-### Background
+## Background
 Today, I have setup a k8s cluster using weave network. The versions will be mentioned in later parts of this blog. However, it will time out when accessing a service through node port of the service, if originated from non-k8s-nodes, while it works as expect if originated from k8s cluster nodes. This is really wired issue which should not happen in the first place.
 
 I am going to collect the related data, and explain to you what happened under the surface. I hope you will learn something regarding weave network and iptables. 
@@ -20,7 +20,7 @@ Sections of this blog:
 * [Explaination](#explaination)
 * [Solution](#solution)
 
-### Environment
+## Environment
 1. Kubernetes nodes:
 ```text
 [root@A01-R06-I13-30 ~]# kubectl get nodes -o wide
@@ -234,7 +234,7 @@ Members:
 10.44.0.1 
 ```
 
-### Problem
+## Problem
 Access pga-hawkeye from nodes outside of kubernetes will timeout
 ```text
 [root@A06-R12-302F0204-I33-31 ~]# curl 172.19.13.30:30502  
@@ -247,7 +247,7 @@ However, accessing from nodes inside kubernetes will succeed
 ......
 ```
 
-### Gathered Facts
+## Gathered Facts
 1. WEAVE-NPC logs
 ```text
 DEBU: 2017/06/29 10:32:27.744648 AddPod ignored for pod cloud-op/pga-hawkeye-3696951108-zz00k on node
@@ -282,7 +282,7 @@ WARN: 2017/06/30 07:55:50.346385 TCP connection from 172.27.33.31:37276 to 10.36
 ......
 ```
 
-### Problem Analysis
+## Problem Analysis
 1. iptables process flow
 ![image of iptables process flow](https://s3.amazonaws.com/cp-s3/wp-content/uploads/2015/09/08085516/iptables-Flowchart.jpg)
 2. Kubernetes chains includes following:
@@ -300,7 +300,7 @@ WARN: 2017/06/30 07:55:50.346385 TCP connection from 172.27.33.31:37276 to 10.36
 * FORWARD ->filter -> WEAVE-NPC
 * POSTROUTING ->nat ->WEAVE
 
-### Explaination
+## Explaination
 Access pga-hawkeye from nodes outside of kubernetes will timeout. This is because datastreams from outside will go through chains:
 1. PREROUTING, where dst and port get changed by KUBE-SERVICES chains
 2. FORWARD, where WEAVE-NPC takes place, and packets gets blocked, since the src/port does not match following rule:
@@ -312,7 +312,7 @@ However, accessing from nodes inside kubernetes will succeed. This is becuase da
 1. OUTPUT, where dst and port get changed by KUBE-SERVICES chains
 2. POSTROUTING, where WEAVE takes place and masquerade happens, which updated the src/port 
 
-### Solution
+## Solution
 Update a rule in custom chain WEAVE-NPC created by weave-npc to accept datastreams originated outside of k8s nodes.
 * The original rule in WEAVE-NPC chain
 ```text
